@@ -1,3 +1,5 @@
+#include <pthreads.h>
+#include <stdlib.h>
 #include "defender.h"
 #include "configReader.h"
 #include "lock.h"
@@ -21,6 +23,10 @@ void *runDefender( void *defend ) {
         ch = getch();
         if( ch == KEY_LEFT && def->pos - 1 > -1) {
             lock();
+            move( def->height, def->pos );
+            for( int i = 0; i < 5; i++ ) {
+                delch();
+            }
             mvaddrstr( def->height, def->pos - 1, def->graphic );
             def->pos = def->pos - 1;
             refresh();
@@ -28,10 +34,18 @@ void *runDefender( void *defend ) {
         }
         else if( ch == KEY_RIGHT && def->pos + 1 < def->width) {
             lock();
+            move( def->height, def->pos );
+            for( int i = 0; i < 5; i++ ) {
+                delch();
+            }
             mvaddrstr( def->height, def->pos + 1, def->graphic );
             def->pos = def->pos + 1;
             refresh();
             unlock();
         }
+        else if( ch == 'q' ) {
+            break;
+        }
     }
+    pthread_exit( NULL );
 }
